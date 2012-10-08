@@ -90,6 +90,18 @@ class Com_Port(object):
 
     def __init__(self, name):
         self.name = name
+
+        self.cmd_rx_ack                          = 0
+        self.cmd_rx_test_response                = 2
+        self.cmd_rx_wakeup_indication            = 7
+        self.cmd_rx_data_confirmation            = 33
+        self.cmd_rx_data_indication              = 34
+        self.cmd_rx_get_address_response         = 37
+        self.cmd_rx_get_panid_response           = 40
+        self.cmd_rx_get_channel_response         = 43
+        self.cmd_rx_get_receiver_state_response  = 46
+        self.cmd_rx_get_transmit_power_response  = 49
+        self.cmd_rx_set_ack_state_response       = 55
     #-------------------------------------------------------------------------#
 
     def printme(self):
@@ -187,6 +199,35 @@ class Com_Port(object):
         frame_length = 0
         payload = []
 
+        # Command states
+        ack             = 0
+        test            = 1
+        wakeup          = 3
+        dataconf        = 4
+        dataind         = 5
+        address         = 6
+        panid           = 7
+        channel         = 8
+        trxstate        = 9
+        txpower         = 10
+        ackstate        = 11
+        response_state = ack
+
+        # Data Indication parse
+        dataind_srcaddr1 = 0
+        dataind_srcaddr2 = 1
+        dataind_options  = 2
+        dataind_lqi      = 3
+        dataind_rssi     = 4
+        dataind_payload  = 5
+        dataind = dataind_srcaddr1
+
+        # Two byte reponses
+        byte1            = 1
+        byte2            = 2
+        bogusbyte        = 3
+        twobytestate     = byte1
+
         # Get the data and post it to the box.
         rxdata = serial_port.read(num_bytes)
         print('rx data received = ', rxdata)
@@ -199,8 +240,8 @@ class Com_Port(object):
             ui.textEditRx.insertPlainText(' ')
 
             # Put it into the command frame constructor area too...
-            ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
-            ui.textEditRfResponse.insertPlainText(' ')
+            # ETG ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
+            # ETG ui.textEditRfResponse.insertPlainText(' ')
 
             # We can pick off the start of frame, command id and payload here to parse it...
             if current_state == STARTSTATE:
@@ -215,15 +256,192 @@ class Com_Port(object):
                 command_id = ch
                 print 'Getting the command id, ch = ', hex(ch)
                 current_state = PAYLOADSTATE
+                # parse the command id
+                if ch == self.cmd_rx_ack:
+                    ui.textEditRfResponse.insertPlainText("ACK Response = ")
+                    response_state = ack
+                elif ch == self.cmd_rx_test_response:
+                    ui.textEditRfResponse.insertPlainText("Test OK")
+                    response_state = test
+                elif ch == self.cmd_rx_wakeup_indication:
+                    ui.textEditRfResponse.insertPlainText("Awake Now!")
+                    response_state = wakeup
+                elif ch == self.cmd_rx_data_confirmation:
+                    ui.textEditRfResponse.insertPlainText("Data Confirmation: ")
+                    response_state = dataconf
+                elif ch == self.cmd_rx_data_indication:
+                    ui.textEditRfResponse.insertPlainText("Data Indication: ")
+                    response_state = dataind
+                elif ch == self.cmd_rx_get_address_response:
+                    ui.textEditRfResponse.insertPlainText("Node Address is: ")
+                    response_state = address
+                elif ch == self.cmd_rx_get_panid_response:
+                    ui.textEditRfResponse.insertPlainText("Node PANID is: ")
+                    response_state = panid
+                elif ch == self.cmd_rx_get_channel_response:
+                    ui.textEditRfResponse.insertPlainText("Node Channel is: ")
+                    response_state = channel
+                elif ch == self.cmd_rx_get_receiver_state_response:
+                    ui.textEditRfResponse.insertPlainText("TRX State is: ")
+                    response_state = trxstate
+                elif ch == self.cmd_rx_get_transmit_power_response:
+                    ui.textEditRfResponse.insertPlainText("TX Power is: ")
+                    response_state = txpower
+                elif ch == self.cmd_rx_set_ack_state_response:
+                    ui.textEditRfResponse.insertPlainText("ACK State is: ")
+                    response_state = ackstate
             elif current_state == PAYLOADSTATE:
                 print 'Parsing the payload, ch = ', hex(ch)
                 if frame_length == 0:
                     current_state = STARTSTATE
+                    # reset the data indication start state and the response
+                    dataind = dataind_srcaddr1
+                    response_state = ack
                     # Add a carriage return...
                     ui.textEditRx.insertPlainText('\n')
                     ui.textEditRfResponse.insertPlainText('\n')
                 else:
                     frame_length -= 1
+
+                    # parse the response
+                    if response_state == ack:
+                        if ch == 0:
+                            ui.textEditRfResponse.insertPlainText("Success")
+                        elif ch == 1:
+                            ui.textEditRfResponse.insertPlainText("Unknown Error")
+                        elif ch == 2:
+                            ui.textEditRfResponse.insertPlainText("Out of Memory")
+                        elif ch == 17:
+                            ui.textEditRfResponse.insertPlainText("No ACK was Received")
+                        elif ch == 64:
+                            ui.textEditRfResponse.insertPlainText("Channel Access Failure")
+                        elif ch == 65:
+                            ui.textEditRfResponse.insertPlainText("No Physical ACK was Received")
+                        elif ch == 128:
+                            ui.textEditRfResponse.insertPlainText("Invalid Command Size")
+                        elif ch == 129:
+                            ui.textEditRfResponse.insertPlainText("Invalid CRC")
+                        elif ch == 130:
+                            ui.textEditRfResponse.insertPlainText("Timeout")
+                        elif ch == 131:
+                            ui.textEditRfResponse.insertPlainText("Unknown Command")
+                        elif ch == 132:
+                            ui.textEditRfResponse.insertPlainText("Malformed Command")
+                        elif ch == 133:
+                            ui.textEditRfResponse.insertPlainText("Internal FLASH Error")
+                        elif ch == 134:
+                            ui.textEditRfResponse.insertPlainText("Invalid Data Request Payload Size")
+                    # elif response_state == test: One byte command - no payload
+                    # elif response_state == wakeup: One byte command - no payload
+                    elif response_state == dataconf:
+                        if ch == 0:
+                            ui.textEditRfResponse.insertPlainText("Successful - ")
+                            frame_length -= 1
+                        elif ch == 1:
+                            ui.textEditRfResponse.insertPlainText("Unknown Error - ")
+                            frame_length -= 1
+                        elif ch == 2:
+                            ui.textEditRfResponse.insertPlainText("Out of Memory - ")
+                            frame_length -= 1
+                        elif ch == 17:
+                            ui.textEditRfResponse.insertPlainText("No ACK was Received - ")
+                            frame_length -= 1
+                        elif ch == 64:
+                            ui.textEditRfResponse.insertPlainText("Channel Access Failure - ")
+                            frame_length -= 1
+                        elif ch == 65:
+                            ui.textEditRfResponse.insertPlainText("No Physical ACK was Received - ")
+                            frame_length -= 1
+                        # print the handle.
+                        ui.textEditRfResponse.insertPlainText(" Handle: ")
+                        ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
+                        frame_length -= 1
+                    elif response_state == dataind:
+                        if dataind == dataind_srcaddr1:
+                            ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
+                            dataind = dataind_srcaddr2
+                            frame_length -= 1
+                        elif dataind == dataind_srcaddr2:
+                            ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
+                            dataind = dataind_options
+                            frame_length -= 1
+                        elif dataind == dataind_options:
+                            if ch == 0:
+                                ui.textEditRfResponse.insertPlainText("No Options Set")
+                            elif ch == 1:
+                                ui.textEditRfResponse.insertPlainText("ACK was Requested")
+                            elif ch == 2:
+                                ui.textEditRfResponse.insertPlainText("Security was Used")
+                            dataind = dataind_lqi
+                            frame_length -= 1
+                        elif dataind == dataind_lqi:
+                            ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
+                            dataind = dataind_rssi
+                            frame_length -= 1
+                        elif dataind == dataind_rssi:
+                            ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
+                            dataind = dataind_payload
+                            frame_length -= 1
+                        elif dataind == dataind_payload:
+                            ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
+                            if frame_length > 1:
+                                frame_length -= 1
+                    elif response_state == address:
+                        ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
+                        if frame_length > 1:
+                            frame_length -= 1
+                    elif response_state == panid:
+                        ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
+                        if frame_length > 1:
+                            frame_length -= 1
+                    elif response_state == channel:
+                        ui.textEditRfResponse.insertPlainText(str(ch))
+                        frame_length -= 1
+                    elif response_state == trxstate:
+                        if ch == 0:
+                            ui.textEditRfResponse.insertPlainText("TX Mode")
+                        else:
+                            ui.textEditRfResponse.insertPlainText("RX Mode")
+                        frame_length -= 1
+                    elif response_state == txpower:
+                        if ch == 0:
+                            ui.textEditRfResponse.insertPlainText("+3.0 dBm")
+                        elif ch == 1:
+                            ui.textEditRfResponse.insertPlainText("+2.8 dBm")
+                        elif ch == 2:
+                            ui.textEditRfResponse.insertPlainText("+2.3 dBm")
+                        elif ch == 3:
+                            ui.textEditRfResponse.insertPlainText("+1.8 dBm")
+                        elif ch == 4:
+                            ui.textEditRfResponse.insertPlainText("+1.3 dBm")
+                        elif ch == 5:
+                            ui.textEditRfResponse.insertPlainText("+0.7 dBm")
+                        elif ch == 6:
+                            ui.textEditRfResponse.insertPlainText("0 dBm")
+                        elif ch == 7:
+                            ui.textEditRfResponse.insertPlainText("-1.0 dBm")
+                        elif ch == 8:
+                            ui.textEditRfResponse.insertPlainText("-2.0 dBm")
+                        elif ch == 9:
+                            ui.textEditRfResponse.insertPlainText("-3.0 dBm")
+                        elif ch == 10:
+                            ui.textEditRfResponse.insertPlainText("-4.0 dBm")
+                        elif ch == 11:
+                            ui.textEditRfResponse.insertPlainText("-5.0 dBm")
+                        elif ch == 12:
+                            ui.textEditRfResponse.insertPlainText("-7.0 dBm")
+                        elif ch == 13:
+                            ui.textEditRfResponse.insertPlainText("-9.0 dBm")
+                        elif ch == 14:
+                            ui.textEditRfResponse.insertPlainText("-12.0 dBm")
+                        elif ch == 15:
+                            ui.textEditRfResponse.insertPlainText("-17.0 dBm")
+                    elif response_state == ackstate:
+                        if ch == 0:
+                            ui.textEditRfResponse.insertPlainText("ACK Disabled")
+                        else:
+                            ui.textEditRfResponse.insertPlainText("ACK Enabled")
+                        frame_length -= 1
 
                 if frame_length >= 1: # Don't grab any CRC bytes.
                     payload.append(hex(ch))

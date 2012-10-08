@@ -886,9 +886,15 @@ class Command(object):
         local_serial.flush()
 
         print self.frame
+        for ch in self.frame:
+            self.local_ui.textEditTx.insertPlainText(d2hexstr(ch))
+            self.local_ui.textEditTx.insertPlainText(" ")
+        self.local_ui.textEditTx.insertPlainText("\n")
 
         # This transmits the data in the serial frame!
         local_serial.write(self.frame)
+
+
 
     # When the clear pushbutton is pressed on the Data page of the stackedwidget, clear all
     # stuff out...

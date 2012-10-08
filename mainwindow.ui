@@ -44,7 +44,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>110</y>
+        <y>120</y>
         <width>121</width>
         <height>32</height>
        </rect>
@@ -854,12 +854,12 @@
        <rect>
         <x>20</x>
         <y>230</y>
-        <width>91</width>
+        <width>131</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>Fame to send</string>
+       <string>Serial fame to send:</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="lineEditFrameToSend">
@@ -885,49 +885,26 @@
        <string>Send Frame</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_24">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>310</y>
-        <width>111</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Serial Response</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEditSerialResponse">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>330</y>
-        <width>511</width>
-        <height>22</height>
-       </rect>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_25">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>370</y>
-        <width>91</width>
+        <y>310</y>
+        <width>141</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>RF Response</string>
+       <string>RadioBlock Response:</string>
       </property>
      </widget>
      <widget class="QTextEdit" name="textEditRfResponse">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>390</y>
+        <y>330</y>
         <width>511</width>
-        <height>101</height>
+        <height>161</height>
        </rect>
       </property>
      </widget>
@@ -953,7 +930,7 @@
      <x>0</x>
      <y>0</y>
      <width>577</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
