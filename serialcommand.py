@@ -109,6 +109,8 @@ class Command(object):
         self.cmd_tx_set_ack_state_request        = 0x35
         self.cmd_tx_get_ack_state_request        = 0x36
         self.cmd_tx_set_led_state_request        = 0x80
+        self.cmd_tx_start_sniffer_request        = 0x90
+        self.cmd_tx_stop_sniffer_request         = 0x91
 
         # Commands to be received:
         self.cmd_rx_ack                          = 0x00
@@ -147,7 +149,9 @@ class Command(object):
             [17, "cmd_tx_set_security_key_request", "0x32"],
             [2, "cmd_tx_set_ack_state_request", "0x35"],
             [1, "cmd_tx_get_ack_state_request", "0x36"],
-            [2, "cmd_tx_set_led_state_request", "0x80"] ]
+            [2, "cmd_tx_set_led_state_request", "0x80"],
+            [1, "cmd_tx_start_sniffer_request", "0x90"],
+            [1, "cmd_tx_stop_sniffer_request", "0x91"]]
 
         self.cmd_rx = [
             [2, "cmd_rx_ack", 0x00],
@@ -244,7 +248,8 @@ class Command(object):
                    "cmd_tx_get_channel_request", "cmd_tx_set_receiver_state_request",
                    "cmd_tx_get_receiver_state_request", "cmd_tx_set_transmit_power_request",
                    "cmd_tx_get_transmit_power_request", "cmd_tx_set_security_key_request",
-                   "cmd_tx_set_ack_state_request", "cmd_tx_get_ack_state_request", "cmd_tx_set_led_state_request"]
+                   "cmd_tx_set_ack_state_request", "cmd_tx_get_ack_state_request", "cmd_tx_set_led_state_request",
+                   "cmd_tx_start_sniffer_request", "cmd_tx_stop_sniffer_request"]
 
         # Populate the combobox here.
         for each_cmd in cmdName:

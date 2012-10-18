@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>577</width>
-    <height>684</height>
+    <width>734</width>
+    <height>737</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>551</width>
-      <height>541</height>
+      <width>711</width>
+      <height>621</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -904,8 +904,94 @@
         <x>20</x>
         <y>330</y>
         <width>511</width>
-        <height>161</height>
+        <height>171</height>
        </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_4">
+     <attribute name="title">
+      <string>Sniffer</string>
+     </attribute>
+     <widget class="QTextEdit" name="textEditSniffer">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>360</y>
+        <width>681</width>
+        <height>221</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelSniffer">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>681</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Start Byte    Size    Command ID     ....</string>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="tableWidgetSniffer">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>681</width>
+        <height>281</height>
+       </rect>
+      </property>
+      <property name="rowCount">
+       <number>1</number>
+      </property>
+      <property name="columnCount">
+       <number>12</number>
+      </property>
+      <row/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+     </widget>
+     <widget class="QPushButton" name="pushButtonStarSniffer">
+      <property name="geometry">
+       <rect>
+        <x>460</x>
+        <y>10</y>
+        <width>114</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Don't forget to select the channel in the Command Frame Constructor Tab!</string>
+      </property>
+      <property name="text">
+       <string>Start Sniffing</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonStopSniffer">
+      <property name="geometry">
+       <rect>
+        <x>580</x>
+        <y>10</y>
+        <width>114</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Stop Sniffing</string>
       </property>
      </widget>
     </widget>
@@ -913,8 +999,8 @@
    <widget class="QPushButton" name="pushButton_4">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>580</y>
+      <x>610</x>
+      <y>640</y>
       <width>114</width>
       <height>32</height>
      </rect>
@@ -929,8 +1015,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>577</width>
-     <height>26</height>
+     <width>734</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
