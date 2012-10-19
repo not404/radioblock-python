@@ -328,10 +328,12 @@ class Com_Port(object):
                     ui.textEditRx.insertPlainText('\n')
                     ui.textEditRfResponse.insertPlainText('\n')
                 else:
-                    frame_length -= 1
+#                    frame_length -= 1
 
                     # parse the response
                     if response_state == ack:
+                        frame_length -= 1
+
                         if ch == 0:
                             ui.textEditRfResponse.insertPlainText("Success")
                         elif ch == 1:
@@ -361,6 +363,8 @@ class Com_Port(object):
                     # elif response_state == test: One byte command - no payload
                     # elif response_state == wakeup: One byte command - no payload
                     elif response_state == dataconf:
+                        frame_length -= 1
+
                         if ch == 0:
                             ui.textEditRfResponse.insertPlainText("Successful - ")
                             frame_length -= 1
@@ -488,91 +492,96 @@ class Com_Port(object):
 
                         if self.col == self.FCF:
                             if twobytestate == byte1:
-                                lsb = hex(ch)[2:]
+                                lsb = d2hexstr(ch)
                                 twobytestate = byte2
                             elif twobytestate == byte2:
-                                ui.tableWidgetSniffer.setItem(self.row, self.FCF, PySide.QtGui.QTableWidgetItem(hex(ch)[2:] + lsb))
+                                ui.tableWidgetSniffer.setItem(self.row, self.FCF, PySide.QtGui.QTableWidgetItem(d2hexstr(ch) + lsb))
                                 twobytestate = byte1
                                 self.col += 1
 
                         elif self.col == self.Seq_Num:
-                            ui.tableWidgetSniffer.setItem(self.row, self.Seq_Num, PySide.QtGui.QTableWidgetItem(hex(ch)[2:]))
+                            ui.tableWidgetSniffer.setItem(self.row, self.Seq_Num, PySide.QtGui.QTableWidgetItem(d2hexstr(ch)))
                             self.col += 1
 
                         elif self.col == self.PANID:
                             if twobytestate == byte1:
-                                lsb = hex(ch)[2:]
+                                lsb = d2hexstr(ch)
                                 twobytestate = byte2
                             elif twobytestate == byte2:
-                                ui.tableWidgetSniffer.setItem(self.row, self.PANID, PySide.QtGui.QTableWidgetItem(hex(ch)[2:] + lsb))
+                                ui.tableWidgetSniffer.setItem(self.row, self.PANID, PySide.QtGui.QTableWidgetItem(d2hexstr(ch) + lsb))
                                 twobytestate = byte1
                                 self.col += 1
 
                         elif self.col == self.MAC_Dst_Addr:
                             if twobytestate == byte1:
-                                lsb = hex(ch)[2:]
+                                lsb = d2hexstr(ch)
                                 twobytestate = byte2
                             elif twobytestate == byte2:
-                                ui.tableWidgetSniffer.setItem(self.row, self.MAC_Dst_Addr, PySide.QtGui.QTableWidgetItem(hex(ch)[2:] + lsb))
+                                ui.tableWidgetSniffer.setItem(self.row, self.MAC_Dst_Addr, PySide.QtGui.QTableWidgetItem(d2hexstr(ch) + lsb))
                                 twobytestate = byte1
                                 self.col += 1
 
                         elif self.col == self.MAC_Src_Addr:
                             if twobytestate == byte1:
-                                lsb = hex(ch)[2:]
+                                lsb = d2hexstr(ch)
                                 twobytestate = byte2
                             elif twobytestate == byte2:
-                                ui.tableWidgetSniffer.setItem(self.row, self.MAC_Src_Addr, PySide.QtGui.QTableWidgetItem(hex(ch)[2:] + lsb))
+                                ui.tableWidgetSniffer.setItem(self.row, self.MAC_Src_Addr, PySide.QtGui.QTableWidgetItem(d2hexstr(ch) + lsb))
                                 twobytestate = byte1
                                 self.col += 1
 
                         elif self.col == self.NWK_FCF:
-                            ui.tableWidgetSniffer.setItem(self.row, self.NWK_FCF, PySide.QtGui.QTableWidgetItem(hex(ch)[2:]))
+                            ui.tableWidgetSniffer.setItem(self.row, self.NWK_FCF, PySide.QtGui.QTableWidgetItem(d2hexstr(ch)))
                             self.col += 1
 
                         elif self.col == self.NWK_Seq_Num:
-                            ui.tableWidgetSniffer.setItem(self.row, self.NWK_Seq_Num, PySide.QtGui.QTableWidgetItem(hex(ch)[2:]))
+                            ui.tableWidgetSniffer.setItem(self.row, self.NWK_Seq_Num, PySide.QtGui.QTableWidgetItem(d2hexstr(ch)))
                             self.col += 1
 
                         elif self.col == self.NWK_Src_Addr:
                             if twobytestate == byte1:
-                                lsb = hex(ch)[2:]
+                                lsb = d2hexstr(ch)
                                 twobytestate = byte2
                             elif twobytestate == byte2:
-                                ui.tableWidgetSniffer.setItem(self.row, self.NWK_Src_Addr, PySide.QtGui.QTableWidgetItem(hex(ch)[2:] + lsb))
+                                ui.tableWidgetSniffer.setItem(self.row, self.NWK_Src_Addr, PySide.QtGui.QTableWidgetItem(d2hexstr(ch) + lsb))
                                 twobytestate = byte1
                                 self.col += 1
 
                         elif self.col == self.NWK_Dst_Addr:
                             if twobytestate == byte1:
-                                lsb = hex(ch)[2:]
+                                lsb = d2hexstr(ch)
                                 twobytestate = byte2
                             elif twobytestate == byte2:
-                                ui.tableWidgetSniffer.setItem(self.row, self.NWK_Dst_Addr, PySide.QtGui.QTableWidgetItem(hex(ch)[2:] + lsb))
+                                ui.tableWidgetSniffer.setItem(self.row, self.NWK_Dst_Addr, PySide.QtGui.QTableWidgetItem(d2hexstr(ch) + lsb))
                                 twobytestate = byte1
                                 self.col += 1
 
                         elif self.col == self.Payload:
-                            if payloadLen > 0:
-                                payloadStr += hex(ch)[2:]
+                            if payloadLen > 2:  # Last two bytes are always LQI and RSSI
+                                payloadStr += d2hexstr(ch)
                                 payloadLen -= 1
                             else:
                                 ui.tableWidgetSniffer.setItem(self.row, self.Payload, PySide.QtGui.QTableWidgetItem(payloadStr))
                                 self.col += 1
 
                         elif self.col == self.LQI:
-                            ui.tableWidgetSniffer.setItem(self.row, self.LQI, PySide.QtGui.QTableWidgetItem(hex(ch)[2:]))
+                            ui.tableWidgetSniffer.setItem(self.row, self.LQI, PySide.QtGui.QTableWidgetItem(d2hexstr(ch)))
                             self.col += 1
 
                         elif self.col == self.RSSI:
-                            ui.tableWidgetSniffer.setItem(self.row, self.RSSI, PySide.QtGui.QTableWidgetItem(hex(ch)[2:]))
+                            db = ch - 90 # 90 dB is the lowest dB value RF231 can measure.
+                            db = str(db)
+                            db = db + " dBm"
+                            ui.tableWidgetSniffer.setItem(self.row, self.RSSI, PySide.QtGui.QTableWidgetItem(db))
                             self.col += 1
 
 
                         frame_length -= 1
                         if frame_length == 1:
                             self.row += 1
-                            #ui.tableWidgetSniffer.insertRow(self.row, 0)
+                            self.col = self.FCF
+#                            ui.tableWidgetSniffer.setRowCount(self.row)
+#                            ui.tableWidgetSniffer.insertRow(self.row, 0)
 
 
                 if frame_length >= 1: # Don't grab any CRC bytes.
@@ -654,6 +663,8 @@ if __name__ == '__main__':
     # Set up SNiffer headers
     lables = "FCF", "Seq #", "PANID", "MAC Dst Addr", "MAC Src Addr", "NWK FCF", "NWK Seq #", "NWK Src Addr", "NWK Dst Addr", "Payload", "LQI", "RSSI"
     ui.tableWidgetSniffer.setHorizontalHeaderLabels(lables)
+    # OK, this is stupid, you have to set the row count before you know how many rows you'll need...
+    ui.tableWidgetSniffer.setRowCount(10000)
 
     #ui.tableWidgetSniffer.setItem(0, 0, PySide.QtGui.QTableWidgetItem("Hello"))
 
