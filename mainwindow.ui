@@ -913,36 +913,13 @@
      <attribute name="title">
       <string>Sniffer</string>
      </attribute>
-     <widget class="QTextEdit" name="textEditSniffer">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>360</y>
-        <width>681</width>
-        <height>221</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="labelSniffer">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>681</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Start Byte    Size    Command ID     ....</string>
-      </property>
-     </widget>
      <widget class="QTableWidget" name="tableWidgetSniffer">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>60</y>
+        <y>20</y>
         <width>681</width>
-        <height>281</height>
+        <height>561</height>
        </rect>
       </property>
       <property name="rowCount">
@@ -964,35 +941,6 @@
       <column/>
       <column/>
       <column/>
-     </widget>
-     <widget class="QPushButton" name="pushButtonStarSniffer">
-      <property name="geometry">
-       <rect>
-        <x>460</x>
-        <y>10</y>
-        <width>114</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Don't forget to select the channel in the Command Frame Constructor Tab!</string>
-      </property>
-      <property name="text">
-       <string>Start Sniffing</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButtonStopSniffer">
-      <property name="geometry">
-       <rect>
-        <x>580</x>
-        <y>10</y>
-        <width>114</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Stop Sniffing</string>
-      </property>
      </widget>
     </widget>
    </widget>
@@ -1016,7 +964,7 @@
      <x>0</x>
      <y>0</y>
      <width>734</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

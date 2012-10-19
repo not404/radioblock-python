@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Wed Oct 17 20:57:17 2012
-#      by: pyside-uic 0.2.13 running on PySide 1.1.1
+# Created: Thu Oct 18 12:30:11 2012
+#      by: pyside-uic 0.2.14 running on PySide 1.1.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -270,32 +270,20 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab_3, "")
         self.tab_4 = QtGui.QWidget()
         self.tab_4.setObjectName("tab_4")
-        self.textEditSniffer = QtGui.QTextEdit(self.tab_4)
-        self.textEditSniffer.setGeometry(QtCore.QRect(10, 360, 681, 221))
-        self.textEditSniffer.setObjectName("textEditSniffer")
-        self.labelSniffer = QtGui.QLabel(self.tab_4)
-        self.labelSniffer.setGeometry(QtCore.QRect(10, 40, 681, 20))
-        self.labelSniffer.setObjectName("labelSniffer")
         self.tableWidgetSniffer = QtGui.QTableWidget(self.tab_4)
-        self.tableWidgetSniffer.setGeometry(QtCore.QRect(10, 60, 681, 281))
+        self.tableWidgetSniffer.setGeometry(QtCore.QRect(10, 20, 681, 561))
         self.tableWidgetSniffer.setRowCount(1)
         self.tableWidgetSniffer.setColumnCount(12)
         self.tableWidgetSniffer.setObjectName("tableWidgetSniffer")
         self.tableWidgetSniffer.setColumnCount(12)
         self.tableWidgetSniffer.setRowCount(1)
-        self.pushButtonStarSniffer = QtGui.QPushButton(self.tab_4)
-        self.pushButtonStarSniffer.setGeometry(QtCore.QRect(460, 10, 114, 32))
-        self.pushButtonStarSniffer.setObjectName("pushButtonStarSniffer")
-        self.pushButtonStopSniffer = QtGui.QPushButton(self.tab_4)
-        self.pushButtonStopSniffer.setGeometry(QtCore.QRect(580, 10, 114, 32))
-        self.pushButtonStopSniffer.setObjectName("pushButtonStopSniffer")
         self.tabWidget.addTab(self.tab_4, "")
         self.pushButton_4 = QtGui.QPushButton(self.centralWidget)
         self.pushButton_4.setGeometry(QtCore.QRect(610, 640, 114, 32))
         self.pushButton_4.setObjectName("pushButton_4")
         MainWindow.setCentralWidget(self.centralWidget)
-        self.menuBar = QtGui.QMenuBar()
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 734, 22))
+        self.menuBar = QtGui.QMenuBar(MainWindow)
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 734, 26))
         self.menuBar.setObjectName("menuBar")
         MainWindow.setMenuBar(self.menuBar)
         self.mainToolBar = QtGui.QToolBar(MainWindow)
@@ -356,17 +344,13 @@ class Ui_MainWindow(object):
         self.pushButtonTxFrame.setText(QtGui.QApplication.translate("MainWindow", "Send Frame", None, QtGui.QApplication.UnicodeUTF8))
         self.label_25.setText(QtGui.QApplication.translate("MainWindow", "RadioBlock Response:", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("MainWindow", "Command Frame Constructor", None, QtGui.QApplication.UnicodeUTF8))
-        self.labelSniffer.setText(QtGui.QApplication.translate("MainWindow", "Start Byte    Size    Command ID     ....", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonStarSniffer.setToolTip(QtGui.QApplication.translate("MainWindow", "Don\'t forget to select the channel in the Command Frame Constructor Tab!", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonStarSniffer.setText(QtGui.QApplication.translate("MainWindow", "Start Sniffing", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButtonStopSniffer.setText(QtGui.QApplication.translate("MainWindow", "Stop Sniffing", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QtGui.QApplication.translate("MainWindow", "Sniffer", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_4.setText(QtGui.QApplication.translate("MainWindow", "Quit", None, QtGui.QApplication.UnicodeUTF8))
 
 
 import sys
 def show_mainwindow(app, MainWindow):
-    MainWindow.setWindowTitle('RadioBlocks Commander')
+    MainWindow.setWindowTitle("RadioBlocks Commander")
     MainWindow.setWindowIcon(QtGui.QIcon('favicon.ico'))
     MainWindow.show()
 
