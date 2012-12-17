@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>577</width>
-    <height>684</height>
+    <width>734</width>
+    <height>737</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTabWidget" name="tabWidget">
@@ -19,12 +22,12 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>551</width>
-      <height>541</height>
+      <width>711</width>
+      <height>621</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -489,17 +492,17 @@
      <widget class="QLabel" name="label_14">
       <property name="geometry">
        <rect>
-        <x>298</x>
+        <x>200</x>
         <y>50</y>
-        <width>51</width>
+        <width>231</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>Payload</string>
+       <string>Payload (For Data Request Command!)</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEditPayload">
+     <widget class="QLineEdit" name="lineEditUserPayload">
       <property name="geometry">
        <rect>
         <x>200</x>
@@ -508,11 +511,11 @@
         <height>22</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>&quot;You must press enter to complete building the data request!&quot;</string>
+      </property>
       <property name="autoFillBackground">
        <bool>false</bool>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
       </property>
      </widget>
      <widget class="QStackedWidget" name="stackedWidget">
@@ -593,7 +596,7 @@
          </rect>
         </property>
         <property name="toolTip">
-         <string>Enter an address in the form '12CD'.</string>
+         <string>Enter an address in the form '12CD', then press the Enter Key!</string>
         </property>
         <property name="whatsThis">
          <string/>
@@ -798,29 +801,6 @@
          </rect>
         </property>
        </widget>
-       <widget class="QLabel" name="label_22">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>50</y>
-          <width>51</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Payload</string>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="lineEditUserPayload">
-        <property name="geometry">
-         <rect>
-          <x>80</x>
-          <y>50</y>
-          <width>351</width>
-          <height>22</height>
-         </rect>
-        </property>
-       </widget>
        <widget class="QPushButton" name="pushButtonClear">
         <property name="geometry">
          <rect>
@@ -837,7 +817,7 @@
        <widget class="QProgressBar" name="progressBar">
         <property name="geometry">
          <rect>
-          <x>80</x>
+          <x>30</x>
           <y>80</y>
           <width>311</width>
           <height>23</height>
@@ -904,7 +884,7 @@
         <x>20</x>
         <y>330</y>
         <width>511</width>
-        <height>161</height>
+        <height>171</height>
        </rect>
       </property>
      </widget>
@@ -913,8 +893,8 @@
    <widget class="QPushButton" name="pushButton_4">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>580</y>
+      <x>610</x>
+      <y>640</y>
       <width>114</width>
       <height>32</height>
      </rect>
@@ -929,12 +909,15 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>577</width>
+     <width>734</width>
      <height>26</height>
     </rect>
    </property>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>

@@ -34,32 +34,6 @@
 
 __author__ = 'egnoske'
 
-# Notes for a Python newbie - Me... Eric...
-# Interesting links!
-# http://stackoverflow.com/questions/443967/how-to-create-python-bytes-object-from-long-hex-string
-# http://docs.python.org/py3k/whatsnew/3.0.html#text-vs-data-instead-of-unicode-vs-8-bit
-# http://code.activestate.com/recipes/510399-byte-to-hex-and-hex-to-byte-string-conversion/
-#
-# Interesting conversion info:
-# http://python.about.com/od/python30/ss/30_strings.htm
-#######################################################################################################################
-# http://docs.python.org/py3k/library/stdtypes.html#numeric-types-int-float-complex
-
-# While string objects are sequences of characters (represented by strings of length 1), bytes and bytearray objects
-# are sequences of integers (between 0 and 255), representing the ASCII value of single bytes. That means that for a
-# bytes or bytearray object b, b[0] will be an integer, while b[0:1] will be a bytes or bytearray object of length
-# 1. The representation of bytes objects uses the literal format (b'...') since it is generally more useful than e.g.
-# bytes([50, 19, 100]). You can always convert a bytes object into a list of integers using list(b).
-
-
-#######################################################################################################################
-#
-# http://code.activestate.com/recipes/578025-decimal-number-to-bytes-and-string-to-bytes-conver/
-#
-# Note that in Python 3.2 (whether by design or a bug I'm not sure) unhexlify now won't accept a string,
-# but only bytes. Pretty silly really, but it means you'd need to use b = unhexlify(bytes(myhexstr, 'utf-8'))
-#
-
 
 # Hey, this is a pyside application!
 from PySide import QtCore, QtGui
@@ -193,11 +167,10 @@ class Command(object):
         # Remember an 802.15.4 frame can only be 128 bytes max, SimpleMesh uses a 9 byte MAC header
         # and the PHY tacks on a SOF (0xA7) automatically and a length byte...
         # So, the total paylaod available is 128 - 11 = 117 bytes.
-        #self.payloadCount = 117
-        self.payloadCount = 11
+        self.payloadCount = 9
         ui.progressBar.setMaximum(128)
         ui.progressBar.setMinimum(0)
-        ui.progressBar.setValue(11)
+        ui.progressBar.setValue(9)
 
         # Set up some signals and slots...
 
@@ -254,6 +227,8 @@ class Command(object):
     def processcomboBoxCmd(self, index):
         # Block signals from 2 byte commands.
         self.local_ui.comboBoxCmdOption.blockSignals(True)
+        # Make the user payload line edit box invisible.
+        self.local_ui.lineEditUserPayload.setVisible(False)
 
         # If this is a single command ID byte, don't show any stacked widget pages other than 0.
         if self.cmd_tx[index][0] == 1:
@@ -263,8 +238,6 @@ class Command(object):
             self.local_ui.lineEditSizeByte.setText('0x01')
             # Set the command ID.
             self.local_ui.lineEditCmdId.setText(self.cmd_tx[index][2])
-            # Don't let the user change it.
-            self.local_ui.lineEditPayload.setReadOnly(True)
             # A single byte command will be comprised of 3 bytes:
             # 1. Start byte
             # 2. Size byte
@@ -338,6 +311,8 @@ class Command(object):
             elif self.cmd_tx[index][1] == "cmd_tx_data_request":
                 # Turn on the correct stacked widget page...
                 self.local_ui.stackedWidget.setCurrentIndex(5)
+                # Make the user payload line edit visible.
+                self.local_ui.lineEditUserPayload.setVisible(True)
                 # We don't know how long the data frame will be....
                 for i in range(0, len(self.options)):
                     self.local_ui.comboBoxOptions.addItem(self.options[i][0])
@@ -428,9 +403,6 @@ class Command(object):
             else: # Nothing selected - just return...
                 self.local_ui.comboBoxCmdOption.blockSignals(False)
                 return
-
-            # Don't let the user change it.
-            self.local_ui.lineEditPayload.setReadOnly(True)
 
             # A single byte & single byte payload command will be comprised of 4 bytes:
             # 1. Start byte
@@ -556,8 +528,6 @@ class Command(object):
             self.local_ui.comboBoxCmd.blockSignals(False)
             return
 
-        # Don't let the user change it.
-        self.local_ui.lineEditPayload.setReadOnly(True)
         # A single byte & single byte payload command will be comprised of 4 bytes:
         # 1. Start byte
         # 2. Size byte
@@ -594,10 +564,16 @@ class Command(object):
     def processThreeByteCmd(self):
         # Turn on the correct stacked widget page...
         self.local_ui.stackedWidget.setCurrentIndex(2)
+        # Make the user payload line edit box invisible.
+        self.local_ui.lineEditUserPayload.setVisible(False)
+        # Need to byte swap the address or panid
+        destMsb = self.local_ui.lineEditThisAddress.text()[:2]
+        destLsb = self.local_ui.lineEditThisAddress.text()[2:]
+        dest = destLsb + destMsb
         # Maybe unnecessary, but it helps in debug...
         # A temporary variable, use it to make a hex string of characters where each byte is preceded by '0x'.
         # Before adding the '0x' portion capitalize the hex alpha numbes (a - f).
-        addr = self.str2hex(self.local_ui.lineEditThisAddress.text().upper())
+        addr = self.str2hex(dest.upper())
         # Build the whole command string.
         serial_frame = self.local_ui.lineEditStartByte.text() + self.local_ui.lineEditSizeByte.text() +\
                        self.local_ui.lineEditCmdId.text() + addr
@@ -627,6 +603,10 @@ class Command(object):
 
     def processFiveByteCommands(self):
         self.local_ui.comboBoxCmd.blockSignals(True)
+
+        # Make the user payload line edit box invisible.
+        self.local_ui.lineEditUserPayload.setVisible(False)
+
         # For CRC calculation
         crc_list = []
 
@@ -702,16 +682,26 @@ class Command(object):
         elif self.local_ui.comboBoxCmd.currentText() ==  "cmd_tx_data_request":
             # Turn on the correct stacked widget page...
             self.local_ui.stackedWidget.setCurrentIndex(5)
+
+            # Make the user payload line edit visible.
+            self.local_ui.lineEditUserPayload.setVisible(True)
+
             # We don't know how long the data frame will be....
 
             # Maybe unnecessary, but it helps in debug...
             # A temporary variable, use it to make a hex string of characters where each byte is preceeded by '0x'.
             dest_addr = self.local_ui.lineEditDestAddr.text()
+
+            # Need to byte swap the address
+            destMsb = dest_addr[:2]
+            destLsb = dest_addr[2:]
+            dest_addr = destLsb + destMsb
+
             # Check for a valid address 0 to 65,535
             if int(dest_addr, 16) > 65535:
                 self.local_ui.comboBoxCmd.blockSignals(False)
                 return
-            dest = self.str2hex(self.local_ui.lineEditDestAddr.text().zfill(4))
+            dest = self.str2hex(dest_addr.zfill(4))
             # Use the Class handle.
             self.local_ui.lineEditHandle.setText(str(self.dataHandle))
             if self.dataHandle < 10:
@@ -848,8 +838,7 @@ class Command(object):
     def processProgressBar(self, s):
         self.payloadCount += 1
         # Calculate the percentage payload left.
-        dbg = self.payloadCount/self.local_ui.progressBar.maximum()
-        #dbg = (self.local_ui.progressBar.value() - self.local_ui.progressBar.minimum())/(self.local_ui.progressBar.maximum() - self.local_ui.progressBar.minimum())
+        dbg = float(float(self.payloadCount)/float(self.local_ui.progressBar.maximum()))
         prog = round(100*dbg)
         self.local_ui.progressBar.setValue(prog)
 
@@ -902,9 +891,9 @@ class Command(object):
         self.local_ui.lineEditDestAddr.clear()
         self.local_ui.lineEditHandle.clear()
         self.local_ui.lineEditUserPayload.clear()
-        self.local_ui.lineEditPayload.clear()
         self.local_ui.comboBoxOptions.setCurrentIndex(0)
         self.local_ui.progressBar.setValue(11)
+        self.payloadCount = 9
 
     # Try this for calculating the CRC for the serial interface.
     # buf is a list of integers!!

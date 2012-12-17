@@ -35,9 +35,11 @@
 __author__ = 'egnoske'
 
 # Hey, this is a pyside application!
+import PySide
 from PySide import QtCore, QtGui
 
-from PySide.QtGui import QColor
+
+from PySide.QtGui import QColor, QTextCursor
 
 # Needed for string handling (I think)...
 try:
@@ -102,12 +104,12 @@ class Com_Port(object):
         self.cmd_rx_get_receiver_state_response  = 46
         self.cmd_rx_get_transmit_power_response  = 49
         self.cmd_rx_set_ack_state_response       = 55
-    #-------------------------------------------------------------------------#
 
+    #-------------------------------------------------------------------------#
     def printme(self):
         print(self.name)
-    #-------------------------------------------------------------------------#
 
+    #-------------------------------------------------------------------------#
     def findComPorts(self, ui, serial_port):
         # This function just prints them to the terminal/console.
         if platform.system() == 'Windows':
@@ -126,10 +128,14 @@ class Com_Port(object):
             ports = scanlinux.scan()
 
         # Populate the drop down list box for the COM ports
+        comMenu = ui.menuBar.addMenu('&COM')
         for item in ports:
             ui.comboBoxCOMPort.addItem(item)
+            # Menu - COM
+            comMenu.addAction(item)
 
         # Create a list of typical BAUD rates and populate the Combo Box with those.
+#        comMenu = ui.menuBar.add addMenu('&COM')
         baud = ['9600','14400','19200','28800','38400','57600','115200','230400','256000']
         for item in baud:
             ui.comboBoxBAUDRate.addItem(item)
@@ -189,15 +195,15 @@ class Com_Port(object):
 
     def readComPort(self, serial_port, num_bytes):
         # Create some states to help parse the returned frame.
-        RESETSTATE =        255
-        STARTSTATE =        0
-        LENGTHSTATE =       1
-        COMMANDIDSTATE =    2
-        PAYLOADSTATE =      3
-        current_state =     STARTSTATE
-        command_id = 0
-        frame_length = 0
-        payload = []
+        RESETSTATE      = 255
+        STARTSTATE      = 0
+        LENGTHSTATE     = 1
+        COMMANDIDSTATE  = 2
+        PAYLOADSTATE    = 3
+        current_state   = STARTSTATE
+        command_id      = 0
+        frame_length    = 0
+        payload         = []
 
         # Command states
         ack             = 0
@@ -211,6 +217,7 @@ class Com_Port(object):
         trxstate        = 9
         txpower         = 10
         ackstate        = 11
+        fcfstate        = 12    # Drop these bytes on the ground
         response_state = ack
 
         # Data Indication parse
@@ -222,12 +229,19 @@ class Com_Port(object):
         dataind_payload  = 5
         dataind = dataind_srcaddr1
 
-        # Two byte reponses
+        # Two byte responses
         byte1            = 1
         byte2            = 2
         bogusbyte        = 3
         twobytestate     = byte1
-
+        lsb              = 0
+        headerLen        = 17
+        payloadLen       = 0
+        payloadStr       = ''
+        ackFrame         = 0
+        byteCount        = 0
+        ackFrame         = 0
+        ackFCF           = ''
         # Get the data and post it to the box.
         rxdata = serial_port.read(num_bytes)
         print('rx data received = ', rxdata)
@@ -239,18 +253,14 @@ class Com_Port(object):
             ui.textEditRx.insertPlainText(d2hexstr(ch))
             ui.textEditRx.insertPlainText(' ')
 
-            # Put it into the command frame constructor area too...
-            # ETG ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
-            # ETG ui.textEditRfResponse.insertPlainText(' ')
 
             # We can pick off the start of frame, command id and payload here to parse it...
             if current_state == STARTSTATE:
                 if ch == ord(b'\xAB'):
                     current_state = LENGTHSTATE
-                    print 'Parsing started, ch = ', hex(ch)
+                print 'Parsing started, ch = ', hex(ch)
             elif current_state == LENGTHSTATE:
                 frame_length = ch
-                print 'Grabbing frame length, ch = ', hex(ch)
                 current_state = COMMANDIDSTATE
             elif current_state == COMMANDIDSTATE:
                 command_id = ch
@@ -263,15 +273,18 @@ class Com_Port(object):
                 elif ch == self.cmd_rx_test_response:
                     ui.textEditRfResponse.insertPlainText("Test OK")
                     response_state = test
+                    ui.textEditRfResponse.insertPlainText('\n') # Insert a new line
                 elif ch == self.cmd_rx_wakeup_indication:
                     ui.textEditRfResponse.insertPlainText("Awake Now!")
                     response_state = wakeup
+                    ui.textEditRfResponse.insertPlainText('\n') # Insert a new line
                 elif ch == self.cmd_rx_data_confirmation:
                     ui.textEditRfResponse.insertPlainText("Data Confirmation: ")
                     response_state = dataconf
                 elif ch == self.cmd_rx_data_indication:
                     ui.textEditRfResponse.insertPlainText("Data Indication: ")
                     response_state = dataind
+                    ui.textEditRfResponse.insertPlainText('\n') # Insert a new line
                 elif ch == self.cmd_rx_get_address_response:
                     ui.textEditRfResponse.insertPlainText("Node Address is: ")
                     response_state = address
@@ -301,10 +314,9 @@ class Com_Port(object):
                     ui.textEditRx.insertPlainText('\n')
                     ui.textEditRfResponse.insertPlainText('\n')
                 else:
-                    frame_length -= 1
-
-                    # parse the response
                     if response_state == ack:
+                        frame_length -= 1
+
                         if ch == 0:
                             ui.textEditRfResponse.insertPlainText("Success")
                         elif ch == 1:
@@ -334,27 +346,29 @@ class Com_Port(object):
                     # elif response_state == test: One byte command - no payload
                     # elif response_state == wakeup: One byte command - no payload
                     elif response_state == dataconf:
+                        frame_length -= 1
+
                         if ch == 0:
-                            ui.textEditRfResponse.insertPlainText("Successful - ")
+                            ui.textEditRfResponse.insertPlainText("Successful ")
                             frame_length -= 1
                         elif ch == 1:
-                            ui.textEditRfResponse.insertPlainText("Unknown Error - ")
+                            ui.textEditRfResponse.insertPlainText("Unknown Error ")
                             frame_length -= 1
                         elif ch == 2:
-                            ui.textEditRfResponse.insertPlainText("Out of Memory - ")
+                            ui.textEditRfResponse.insertPlainText("Out of Memory ")
                             frame_length -= 1
                         elif ch == 17:
-                            ui.textEditRfResponse.insertPlainText("No ACK was Received - ")
+                            ui.textEditRfResponse.insertPlainText("No ACK was Received ")
                             frame_length -= 1
                         elif ch == 64:
-                            ui.textEditRfResponse.insertPlainText("Channel Access Failure - ")
+                            ui.textEditRfResponse.insertPlainText("Channel Access Failure ")
                             frame_length -= 1
                         elif ch == 65:
-                            ui.textEditRfResponse.insertPlainText("No Physical ACK was Received - ")
+                            ui.textEditRfResponse.insertPlainText("No Physical ACK was Received ")
                             frame_length -= 1
                         # print the handle.
-                        ui.textEditRfResponse.insertPlainText(" Handle: ")
-                        ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
+                        # ETG, Not needed! ui.textEditRfResponse.insertPlainText(" Handle: ")
+                        # ETG, Not needed! ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
                         frame_length -= 1
                     elif response_state == dataind:
                         if dataind == dataind_srcaddr1:
@@ -387,21 +401,35 @@ class Com_Port(object):
                             if frame_length > 1:
                                 frame_length -= 1
                     elif response_state == address:
-                        ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
-                        if frame_length > 1:
-                            frame_length -= 1
+                        if frame_length == 3:
+                            # Need to byte swap the two byte data
+                            Msb = d2hexstr(ch)
+                        if frame_length == 2:
+                            Lsb = d2hexstr(ch)
+                            data = Lsb + Msb
+                            ui.textEditRfResponse.insertPlainText(data)
+                            response_state = fcfstate
+                        frame_length -= 1
                     elif response_state == panid:
-                        ui.textEditRfResponse.insertPlainText(d2hexstr(ch))
-                        if frame_length > 1:
-                            frame_length -= 1
+                        if frame_length == 3:
+                            # Need to byte swap the two byte data
+                            Msb = d2hexstr(ch)
+                        if frame_length == 2:
+                            Lsb = d2hexstr(ch)
+                            data = Lsb + Msb
+                            ui.textEditRfResponse.insertPlainText(data)
+                            response_state = fcfstate
+                        frame_length -= 1
                     elif response_state == channel:
                         ui.textEditRfResponse.insertPlainText(str(ch))
+                        response_state = fcfstate
                         frame_length -= 1
                     elif response_state == trxstate:
                         if ch == 0:
                             ui.textEditRfResponse.insertPlainText("TX Mode")
                         else:
                             ui.textEditRfResponse.insertPlainText("RX Mode")
+                        response_state = fcfstate
                         frame_length -= 1
                     elif response_state == txpower:
                         if ch == 0:
@@ -436,15 +464,17 @@ class Com_Port(object):
                             ui.textEditRfResponse.insertPlainText("-12.0 dBm")
                         elif ch == 15:
                             ui.textEditRfResponse.insertPlainText("-17.0 dBm")
+                        response_state = fcfstate
+                        frame_length -= 1
                     elif response_state == ackstate:
                         if ch == 0:
                             ui.textEditRfResponse.insertPlainText("ACK Disabled")
                         else:
                             ui.textEditRfResponse.insertPlainText("ACK Enabled")
+                        response_state = fcfstate
                         frame_length -= 1
-
-                if frame_length >= 1: # Don't grab any CRC bytes.
-                    payload.append(hex(ch))
+                    elif response_state == fcfstate:
+                        frame_length -= 1
 
     #-------------------------------------------------------------------------#
 
@@ -512,6 +542,10 @@ class Com_Port(object):
                     self.readComPort(serial_port, num_bytes)
 ###############################################################################
 
+
+
+###############################################################################
+
 if __name__ == '__main__':
     # More or less a test to call a function to display the mainwindow GUI...
     app = QtGui.QApplication(sys.argv)
@@ -519,14 +553,41 @@ if __name__ == '__main__':
     ui = mainwindow.Ui_MainWindow()
     ui.setupUi(MainWindow)
 
+    # This sets the background color of a lineEdit box. Data Request
+    newPalette = QtGui.QPalette()
+    newPalette.setColor(ui.lineEditUserPayload.backgroundRole(), QtCore.Qt.yellow)
+    ui.lineEditUserPayload.setPalette(newPalette)
+    ui.lineEditUserPayload.setVisible(False)
+    # Set address/panid
+    ui.lineEditThisAddress.setPalette(newPalette)
+
     # Show the window
     mainwindow.show_mainwindow(app, MainWindow)
 
-    # Use PySerial to setup the COM ports and the GUI.
+    # Menu
+    exitAction = QtGui.QAction(QtGui.QIcon('Exit'), '&Exit', app)
+    exitAction.setShortcut('Ctrl+Q')
+    exitAction.setStatusTip('Exit application')
+    #exitAction.triggered.connect(app.exec_())
+
+    # Menu - File
+    fileMenu = ui.menuBar.addMenu('&File')
+    fileMenu.addAction(exitAction)
+
+    # Use PySerial to setup the COM ports and the GUI. Also, menu items setup there
     serial_port = serial.Serial()
     com = Com_Port('printing: com = commander.Com_Port')
     com.printme()
     com.findComPorts(ui, serial_port)
+
+    # Menu - COM
+    aboutAct = QtGui.QAction('&About', app)
+    aboutAct.setStatusTip("Show the application's About box")
+    #aboutAct.triggered
+
+    helpMenu = ui.menuBar.addMenu("&Help")
+    helpMenu.addAction(aboutAct)
+    #helpMenu.addAction(ui.aboutQtAct)
 
     # Work out the command stuff...
     import serialcommand

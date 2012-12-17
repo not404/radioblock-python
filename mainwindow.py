@@ -1,47 +1,23 @@
-# Copyright (c) 2011 - 2012, SimpleMesh AUTHORS
-# Eric Gnoske,
-# Colin O'Flynn,
-# Blake Leverett,
-# Rob Fries,
-# Colorado Micro Devices Inc..
-# All rights reserved.
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
+# Created: Tue Nov 13 10:02:51 2012
+#      by: pyside-uic 0.2.14 running on PySide 1.1.1
 #
-#   1) Redistributions of source code must retain the above copyright notice,
-#      this list of conditions and the following disclaimer.
-#
-#   2) Redistributions in binary form must reproduce the above copyright
-#       notice, this list of conditions and the following disclaimer in the
-#       documentation and/or other materials provided with the distribution.
-#
-#   3) Neither the name of the SimpleMesh AUTHORS nor the names of its contributors
-#       may be used to endorse or promote products derived from this software
-#       without specific prior written permission.
-#
-#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-#  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-#  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-#  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-#  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-#  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-#  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-#  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-#  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-#  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-#  POSSIBILITY OF SUCH DAMAGE.
+# WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(577, 684)
+        MainWindow.resize(734, 737)
+        MainWindow.setAutoFillBackground(False)
         self.centralWidget = QtGui.QWidget(MainWindow)
         self.centralWidget.setObjectName("centralWidget")
         self.tabWidget = QtGui.QTabWidget(self.centralWidget)
-        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 551, 541))
+        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 711, 621))
         self.tabWidget.setObjectName("tabWidget")
         self.tab = QtGui.QWidget()
         self.tab.setObjectName("tab")
@@ -169,13 +145,12 @@ class Ui_MainWindow(object):
         self.label_13.setGeometry(QtCore.QRect(484, 50, 31, 16))
         self.label_13.setObjectName("label_13")
         self.label_14 = QtGui.QLabel(self.tab_3)
-        self.label_14.setGeometry(QtCore.QRect(298, 50, 51, 16))
+        self.label_14.setGeometry(QtCore.QRect(200, 50, 231, 16))
         self.label_14.setObjectName("label_14")
-        self.lineEditPayload = QtGui.QLineEdit(self.tab_3)
-        self.lineEditPayload.setGeometry(QtCore.QRect(200, 70, 261, 22))
-        self.lineEditPayload.setAutoFillBackground(False)
-        self.lineEditPayload.setReadOnly(True)
-        self.lineEditPayload.setObjectName("lineEditPayload")
+        self.lineEditUserPayload = QtGui.QLineEdit(self.tab_3)
+        self.lineEditUserPayload.setGeometry(QtCore.QRect(200, 70, 261, 22))
+        self.lineEditUserPayload.setAutoFillBackground(False)
+        self.lineEditUserPayload.setObjectName("lineEditUserPayload")
         self.stackedWidget = QtGui.QStackedWidget(self.tab_3)
         self.stackedWidget.setGeometry(QtCore.QRect(20, 110, 501, 111))
         self.stackedWidget.setObjectName("stackedWidget")
@@ -263,17 +238,11 @@ class Ui_MainWindow(object):
         self.lineEditHandle = QtGui.QLineEdit(self.Data)
         self.lineEditHandle.setGeometry(QtCore.QRect(320, 20, 113, 22))
         self.lineEditHandle.setObjectName("lineEditHandle")
-        self.label_22 = QtGui.QLabel(self.Data)
-        self.label_22.setGeometry(QtCore.QRect(20, 50, 51, 16))
-        self.label_22.setObjectName("label_22")
-        self.lineEditUserPayload = QtGui.QLineEdit(self.Data)
-        self.lineEditUserPayload.setGeometry(QtCore.QRect(80, 50, 351, 22))
-        self.lineEditUserPayload.setObjectName("lineEditUserPayload")
         self.pushButtonClear = QtGui.QPushButton(self.Data)
         self.pushButtonClear.setGeometry(QtCore.QRect(410, 80, 91, 32))
         self.pushButtonClear.setObjectName("pushButtonClear")
         self.progressBar = QtGui.QProgressBar(self.Data)
-        self.progressBar.setGeometry(QtCore.QRect(80, 80, 311, 23))
+        self.progressBar.setGeometry(QtCore.QRect(30, 80, 311, 23))
         self.progressBar.setProperty("value", 24)
         self.progressBar.setObjectName("progressBar")
         self.stackedWidget.addWidget(self.Data)
@@ -290,18 +259,19 @@ class Ui_MainWindow(object):
         self.label_25.setGeometry(QtCore.QRect(20, 310, 141, 16))
         self.label_25.setObjectName("label_25")
         self.textEditRfResponse = QtGui.QTextEdit(self.tab_3)
-        self.textEditRfResponse.setGeometry(QtCore.QRect(20, 330, 511, 161))
+        self.textEditRfResponse.setGeometry(QtCore.QRect(20, 330, 511, 171))
         self.textEditRfResponse.setObjectName("textEditRfResponse")
         self.tabWidget.addTab(self.tab_3, "")
         self.pushButton_4 = QtGui.QPushButton(self.centralWidget)
-        self.pushButton_4.setGeometry(QtCore.QRect(450, 580, 114, 32))
+        self.pushButton_4.setGeometry(QtCore.QRect(610, 640, 114, 32))
         self.pushButton_4.setObjectName("pushButton_4")
         MainWindow.setCentralWidget(self.centralWidget)
         self.menuBar = QtGui.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 577, 26))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 734, 26))
         self.menuBar.setObjectName("menuBar")
         MainWindow.setMenuBar(self.menuBar)
         self.mainToolBar = QtGui.QToolBar(MainWindow)
+        self.mainToolBar.setAutoFillBackground(False)
         self.mainToolBar.setObjectName("mainToolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.mainToolBar)
         self.statusBar = QtGui.QStatusBar(MainWindow)
@@ -309,7 +279,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusBar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         self.stackedWidget.setCurrentIndex(5)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -339,11 +309,12 @@ class Ui_MainWindow(object):
         self.label_11.setText(QtGui.QApplication.translate("MainWindow", "Size", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("MainWindow", "CMD ID", None, QtGui.QApplication.UnicodeUTF8))
         self.label_13.setText(QtGui.QApplication.translate("MainWindow", "CRC", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_14.setText(QtGui.QApplication.translate("MainWindow", "Payload", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_14.setText(QtGui.QApplication.translate("MainWindow", "Payload (For Data Request Command!)", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEditUserPayload.setToolTip(QtGui.QApplication.translate("MainWindow", "\"You must press enter to complete building the data request!\"", None, QtGui.QApplication.UnicodeUTF8))
         self.label_26.setText(QtGui.QApplication.translate("MainWindow", "Command Option:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_x.setText(QtGui.QApplication.translate("MainWindow", "label_x", None, QtGui.QApplication.UnicodeUTF8))
         self.label3Byte.setText(QtGui.QApplication.translate("MainWindow", "This Node\'s Address:", None, QtGui.QApplication.UnicodeUTF8))
-        self.lineEditThisAddress.setToolTip(QtGui.QApplication.translate("MainWindow", "Enter an address in the form \'12CD\'.", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEditThisAddress.setToolTip(QtGui.QApplication.translate("MainWindow", "Enter an address in the form \'12CD\', then press the Enter Key!", None, QtGui.QApplication.UnicodeUTF8))
         self.label_28.setText(QtGui.QApplication.translate("MainWindow", "Sleep Interval (milliseconds):", None, QtGui.QApplication.UnicodeUTF8))
         self.lineEditSleep.setToolTip(QtGui.QApplication.translate("MainWindow", "Enter the number of miliseconds to sleep.", None, QtGui.QApplication.UnicodeUTF8))
         self.label_15.setText(QtGui.QApplication.translate("MainWindow", "Data Bits", None, QtGui.QApplication.UnicodeUTF8))
@@ -353,7 +324,6 @@ class Ui_MainWindow(object):
         self.label_19.setText(QtGui.QApplication.translate("MainWindow", "Destination Address", None, QtGui.QApplication.UnicodeUTF8))
         self.label_20.setText(QtGui.QApplication.translate("MainWindow", "Options", None, QtGui.QApplication.UnicodeUTF8))
         self.label_21.setText(QtGui.QApplication.translate("MainWindow", "Handle", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_22.setText(QtGui.QApplication.translate("MainWindow", "Payload", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonClear.setText(QtGui.QApplication.translate("MainWindow", "Clear", None, QtGui.QApplication.UnicodeUTF8))
         self.label_23.setText(QtGui.QApplication.translate("MainWindow", "Serial fame to send:", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonTxFrame.setText(QtGui.QApplication.translate("MainWindow", "Send Frame", None, QtGui.QApplication.UnicodeUTF8))
@@ -364,7 +334,8 @@ class Ui_MainWindow(object):
 
 import sys
 def show_mainwindow(app, MainWindow):
-    MainWindow.setWindowTitle('RadioBlocks Commander')
+    MainWindow.setWindowTitle("RadioBlocks Commander")
     MainWindow.setWindowIcon(QtGui.QIcon('favicon.ico'))
     MainWindow.show()
+
 
