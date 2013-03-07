@@ -369,7 +369,8 @@ class comHandler (Thread):
         elif not(isHexString(seckey)) and len(seckey)== SEC_KEY_LEN/2:
             for i in range(0,SEC_KEY_LEN/2):
                 frame.append(ord(seckey[i]))
-
+        else:
+            raise Exception('invalid argument')
 
         frame = appendCRC(frame)
         return frame
