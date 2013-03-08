@@ -81,8 +81,8 @@ class RB_MainWindow(QMainWindow, ui_RB.Ui_MainWindow):
             self.comboBoxCOMPort.addItem(item)
     
         # Create a list of typical BAUD rates and populate the Combo Box with those.
-        baud = ['9600','14400','19200','28800','38400','57600','115200','230400','256000']
-        self.comboBoxBAUDRate.addItems(baud)
+        self.baudarray = ['9600','14400','19200','28800','38400','57600','115200','230400','256000']
+        self.comboBoxBAUDRate.addItems(self.baudarray)
         self.comboBoxBAUDRate.setCurrentIndex(6)
         self.stackedWidget.setCurrentIndex(0)
         self.tabWidget.setCurrentIndex(0)
@@ -103,8 +103,10 @@ class RB_MainWindow(QMainWindow, ui_RB.Ui_MainWindow):
     def checkRx (self):
         while not(self.respQueue.empty()):
             rx = self.respQueue.get()
+
             if rx.keys()[0] == "rxframe":
                 self.textEditRx.append(getTimeStamp() + getHexString(rx["rxframe"]))
+
             elif rx.keys()[0] == "rxframedesc":
                 if "Timeout" in rx["rxframedesc"]:
                     self.textEditRfResponse.setTextColor(QColor("red"))
@@ -114,7 +116,19 @@ class RB_MainWindow(QMainWindow, ui_RB.Ui_MainWindow):
                     self.textEditRfResponse.append(descOnly)
                 self.textEditRfResponse.setTextColor(QColor("blue"))
 
+            elif rx.keys()[0] == "comlock":
+                if rx.values()[0] == True:
+                    self.comboBoxBAUDRate.setEnabled(False)
+                    self.comboBoxCOMPort.setEnabled(False)
+                else:
+                    self.comboBoxBAUDRate.setEnabled(True)
+                    self.comboBoxCOMPort.setEnabled(True)
 
+            elif rx.keys()[0] == "baudrate_update":
+                baudrate = rx.values()[0]
+                idx = self.baudarray.index(str(baudrate))
+                self.comboBoxBAUDRate.setCurrentIndex(idx)
+                
     @Slot("")
     def on_openComButton_clicked (self):
         if self.ComHandler.serial_port.isOpen():

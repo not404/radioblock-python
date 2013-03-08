@@ -158,6 +158,8 @@ class comHandler (Thread):
         if self.serial_port.isOpen():
             if self.runningScript == "rb_cli.py":
                 print 'port open'
+            else:
+                self.respQ.put({"comlock" : True})
         else:
             if self.runningScript == "rb_cli.py":
                 print "\tCOM port open operation failed",
@@ -166,6 +168,7 @@ class comHandler (Thread):
     def closeComPort(self):
         if self.serial_port.isOpen():
             self.serial_port.close()
+            self.respQ.put({"comlock" : False})
 
     def reconfigureCom (self, databits=8, parity='N', stopbits = 1, baudrate = 115200):
         self._baudrate = baudrate
@@ -181,7 +184,7 @@ class comHandler (Thread):
             print "Com port reconfigured"
             print "Verify uart reconfig"
             print "New Baudrate", self.serial_port.getBaudrate()
-
+        self.respQ.put({"baudrate_update" : baudrate})
 
 
     def buildCommand (self,name,pars):
