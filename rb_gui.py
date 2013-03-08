@@ -99,6 +99,7 @@ class RB_MainWindow(QMainWindow, ui_RB.Ui_MainWindow):
         self.processComboBoxCmd(self.comboBoxCmd.currentText())
         self.progressBar.setValue(float(9*100)/127)
         self.lineEditUserPayload.setEnabled(False)
+        self.populateUartCombos()
 
     def checkRx (self):
         while not(self.respQueue.empty()):
@@ -425,7 +426,7 @@ class RB_MainWindow(QMainWindow, ui_RB.Ui_MainWindow):
 
         elif par == "set_uart_mode_request":
             self.stackedWidget.setCurrentIndex(4)
-            self.populateUartCombos()
+
         else:   
             self.stackedWidget.setCurrentIndex(1)
             self.populateCombo(par)
