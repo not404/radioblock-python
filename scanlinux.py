@@ -14,7 +14,7 @@ def scan():
     """scan for available ports. return a list of device names."""
     # ports = glob.glob('/dev/ttys*') + glob.glob('/dev/ttyUSB*') + glob.glob('/dev/ttyACM*') + glob.glob('/dev/tty.SLAB*')
     # Just use some ports...
-    ports = glob.glob('/dev/tty.SLAB*') + glob.glob('/dev/ttyUSB*') + glob.glob('/dev/ttyACM*')
+    ports = glob.glob('/dev/tty.SLAB*') + glob.glob('/dev/ttyUSB*') + glob.glob('/dev/ttyACM*') + glob.glob('/dev/ttyAMA*')
     return ports
 
 def print_scan():
