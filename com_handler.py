@@ -301,7 +301,6 @@ class comHandler (Thread):
 
     def  set_led_state_request(self,state):
         frame = list(TX_1PAR_COMMANDS["set_led_state_request"])
-        print state
         if state.lower() == 'off':
             frame.append(0)
         elif state.lower() == 'on':
